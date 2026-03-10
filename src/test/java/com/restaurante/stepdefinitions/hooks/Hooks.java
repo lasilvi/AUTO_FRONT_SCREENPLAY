@@ -1,4 +1,4 @@
-package com.restaurante.hooks;
+package com.restaurante.stepdefinitions.hooks;
 
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
@@ -8,8 +8,9 @@ import net.serenitybdd.screenplay.actors.OnlineCast;
 public class Hooks {
 
     @Before
-    public void setTheStage() {
+    public void iniciarEscenario() {
         OnStage.setTheStage(new OnlineCast());
+        OnStage.theActorCalled("Cliente");
     }
 
     @After
