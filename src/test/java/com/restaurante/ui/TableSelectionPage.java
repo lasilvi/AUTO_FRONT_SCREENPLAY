@@ -1,4 +1,4 @@
-package ui;
+package com.restaurante.ui;
 
 import net.serenitybdd.screenplay.targets.Target;
 import org.openqa.selenium.By;
