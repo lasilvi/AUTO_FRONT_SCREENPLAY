@@ -17,11 +17,13 @@ import static net.serenitybdd.screenplay.GivenWhenThen.seeThat;
 import io.cucumber.java.en.And;
 
 public class PedidoStepDefinitions {
-    
+
+    private int numeroMesa;
+
 
     @Given("que un cliente se encuentra en la {string} y selecciona productos disponibles en la carta digital")
     public void queUnClienteSeEncuentraEnLaMesaYSeleccionaProductos(String mesa) {
-        int numeroMesa = Integer.parseInt(mesa);
+        numeroMesa = Integer.parseInt(mesa.replace("Mesa ", "").trim());
 
         OnStage.theActorInTheSpotlight().attemptsTo(
                 SeleccionarMesa.numero(numeroMesa),
@@ -41,7 +43,7 @@ public class PedidoStepDefinitions {
     public void elPersonalDeCocinaGestionaLaOrden() {
         
          OnStage.theActorInTheSpotlight().attemptsTo(
-                PrepararPedido.delaMesa(1)
+                PrepararPedido.delaMesa(numeroMesa)
         );
     }
 
