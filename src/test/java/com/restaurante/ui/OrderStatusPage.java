@@ -40,7 +40,7 @@ public class OrderStatusPage {
     public static final Target STATUS_BADGE =
         Target.the("current status badge")
         .located(By.xpath(
-            "//span[contains(text(),'Pendiente') or contains(text(),'En preparacion') or contains(text(),'Listo')]"
+            "//span[contains(.,'Pendiente') or contains(.,'preparaci') or contains(.,'Listo')]"
         ));
 
     // --- Progress stepper ---

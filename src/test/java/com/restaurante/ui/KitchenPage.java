@@ -37,25 +37,27 @@ public class KitchenPage {
 
     public static final Target ACTIVE_ORDERS_COUNT =
         Target.the("active orders count subtitle")
-        .located(By.xpath("//h1[text()='Bandeja de cocina']/following-sibling::p"));
+        // El <p> está dentro del mismo contenedor que el <h1>, por eso se usa following::p[1]
+        .located(By.xpath("//h1[text()='Bandeja de cocina']/following::p[1]"));
 
     public static final Target CLEAR_ALL_BUTTON =
         Target.the("'Limpiar todo' button to remove all orders")
-        .located(By.xpath("//button[contains(.,'Limpiar todo') or contains(.,'Limpiando')]"));
+        .located(By.xpath("//button[contains(text(),'Limpiar todo') or contains(text(),'Limpiando')]"));
 
     public static final Target REPORT_LINK =
         Target.the("link to orders report")
+        // Selecciona el <a> directamente
         .located(By.cssSelector("a[href='/reports/orders']"));
 
     public static final Target CLIENT_LINK =
         Target.the("link to client view from kitchen")
-        .located(By.cssSelector("a[href='/client/table'] button"));
+        // Selecciona el botón dentro del <a>
+        .located(By.cssSelector("a[href='/client/table'] > button"));
 
     public static final Target LOGOUT_BUTTON =
         Target.the("kitchen logout button")
-        .located(By.xpath("//header//button[.//*[local-name()='svg' and contains(@class,'h-5')]]"
-            + "[not(contains(@class,'theme'))]"
-        ));
+        // Selecciona el botón que contiene el svg del logout y evita el botón de tema
+        .located(By.xpath("//header//button[.//*[local-name()='svg' and contains(@class,'lucide-log-out')]]"));
 
     // --- Kanban columns ---
     public static final Target COLUMN_PENDING_TITLE =
@@ -90,11 +92,9 @@ public class KitchenPage {
     /**
      * Locates an order card by its table number.
      */
-    public static Target orderCardByTable(int tableNumber) {
-        return Target.the("order card for table " + tableNumber)
-            .located(By.xpath(
-                "//h3[normalize-space(text())='Mesa " + tableNumber + "']/ancestor::div[contains(@class,'cursor-pointer') and contains(@class,'p-4')]"
-            ));
+      public static Target orderCardByTable(int numeroMesa) {
+        return Target.the("order card for table " + numeroMesa)
+                     .located(By.xpath("//h3[normalize-space()='Mesa " + numeroMesa + "']"));
     }
 
     /**
@@ -103,8 +103,29 @@ public class KitchenPage {
     public static Target orderCardByShortId(String shortId) {
         return Target.the("order card with short ID '#" + shortId + "'")
             .located(By.xpath(
-                "//p[contains(text(),'#" + shortId + "')]/ancestor::div[contains(@class,'cursor-pointer') and contains(@class,'p-4')]"
+                "//p[contains(.,'#" + shortId + "')]/ancestor::div[contains(@class,'rounded-2xl') and contains(@class,'p-4')]"
             ));
+    }
+
+    public static Target startButtonByShortId(String shortId) {
+        return Target.the("'Iniciar' button for order #" + shortId)
+            .located(By.xpath(
+                "//p[contains(.,'#" + shortId + "')]/ancestor::div[contains(@class,'rounded-2xl') and contains(@class,'p-4')]//button[normalize-space()='Iniciar']"
+            ));
+    }
+
+    public static Target markReadyButtonByShortId(String shortId) {
+        return Target.the("'Marcar listo' button for order #" + shortId)
+            .located(By.xpath(
+                "//p[contains(.,'#" + shortId + "')]/ancestor::div[contains(@class,'rounded-2xl') and contains(@class,'p-4')]//button[normalize-space()='Marcar listo']"
+            ));
+    }
+
+    public static Target orderCardInReadyColumn(int numeroMesa) {
+        return Target.the("Mesa " + numeroMesa + " in Listo column")
+                     .located(By.xpath(
+                         "//h2[normalize-space()='Listo']/parent::div/parent::div//h3[normalize-space()='Mesa " + numeroMesa + "']"
+                     ));
     }
 
     // --- Order card action buttons ---
@@ -112,21 +133,21 @@ public class KitchenPage {
     /**
      * Locates the 'Iniciar' button (PENDING → IN_PREPARATION) on an order card for a given table.
      */
-    public static Target startButtonByTable(int tableNumber) {
-        return Target.the("'Iniciar' button for table " + tableNumber)
-            .located(By.xpath(
-                "//h3[normalize-space(text())='Mesa " + tableNumber + "']/ancestor::div[contains(@class,'p-4')]//button[text()='Iniciar']"
-            ));
+    public static Target startButtonByTable(int numeroMesa) {
+        return Target.the("Iniciar button for table " + numeroMesa)
+                     .located(By.xpath(
+                         "//h3[normalize-space()='Mesa " + numeroMesa + "']/ancestor::div[contains(@class,'rounded-2xl') and contains(@class,'p-4')]//button[normalize-space()='Iniciar']"
+                     ));
     }
 
     /**
      * Locates the 'Marcar listo' button (IN_PREPARATION → READY) on an order card for a given table.
      */
-    public static Target markReadyButtonByTable(int tableNumber) {
-        return Target.the("'Marcar listo' button for table " + tableNumber)
-            .located(By.xpath(
-                "//h3[normalize-space(text())='Mesa " + tableNumber + "']/ancestor::div[contains(@class,'p-4')]//button[text()='Marcar listo']"
-            ));
+    public static Target markReadyButtonByTable(int numeroMesa) {
+        return Target.the("Marcar listo button for table " + numeroMesa)
+                     .located(By.xpath(
+                         "//h3[normalize-space()='Mesa " + numeroMesa + "']/ancestor::div[contains(@class,'rounded-2xl') and contains(@class,'p-4')]//button[normalize-space()='Marcar listo']"
+                     ));
     }
 
     /**
@@ -135,7 +156,7 @@ public class KitchenPage {
     public static Target revertButtonByTable(int tableNumber) {
         return Target.the("'Volver' button for table " + tableNumber)
             .located(By.xpath(
-                "//h3[normalize-space(text())='Mesa " + tableNumber + "']/ancestor::div[contains(@class,'p-4')]//button[text()='Volver']"
+                "//h3[normalize-space()='Mesa " + tableNumber + "']/ancestor::div[contains(@class,'rounded-2xl') and contains(@class,'p-4')]//button[normalize-space()='Volver']"
             ));
     }
 
@@ -145,7 +166,7 @@ public class KitchenPage {
     public static Target deleteButtonByTable(int tableNumber) {
         return Target.the("'Eliminar' button for table " + tableNumber)
             .located(By.xpath(
-                "//h3[normalize-space(text())='Mesa " + tableNumber + "']/ancestor::div[contains(@class,'p-4')]//button[contains(.,'Eliminar')]"
+                "//h3[normalize-space()='Mesa " + tableNumber + "']/ancestor::div[contains(@class,'rounded-2xl') and contains(@class,'p-4')]//button[normalize-space()='Eliminar']"
             ));
     }
 
@@ -178,4 +199,9 @@ public class KitchenPage {
     public static final Target EMPTY_BOARD_MESSAGE =
         Target.the("empty board message 'No hay pedidos activos'")
         .located(By.xpath("//div[contains(text(),'No hay pedidos activos')]"));
+
+    public static Target orderStatusByTable(int numeroMesa) {
+        return Target.the("badge de estado de la mesa " + numeroMesa)
+                     .located(By.xpath("//div[@data-table='" + numeroMesa + "']//span[contains(@class,'status-badge')]"));
+    }
 }
