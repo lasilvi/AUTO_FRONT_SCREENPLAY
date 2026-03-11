@@ -80,6 +80,13 @@ src/test/
 ```powershell
 .\gradlew.bat clean test aggregate
 ```
+```
+.\gradlew.bat aggregate
+```
+
+```
+.\gradlew.bat clean test aggregate
+```
 
 | Tarea | Descripción |
 |---|---|

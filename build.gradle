@@ -7,9 +7,7 @@ repositories {
 
 buildscript {
     repositories {
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
+        maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
         classpath "net.serenity-bdd:serenity-gradle-plugin:4.2.22"
@@ -37,7 +35,6 @@ ext {
 }
 
 dependencies {
-
     testImplementation "net.serenity-bdd:serenity-core:${serenity_version}"
     testImplementation "net.serenity-bdd:serenity-cucumber:${serenity_version}"
     testImplementation "net.serenity-bdd:serenity-screenplay:${serenity_version}"
@@ -53,13 +50,25 @@ dependencies {
     testImplementation "org.junit.vintage:junit-vintage-engine:${junit_vintage_engine_version}"
 
     testImplementation "org.assertj:assertj-core:${assertj_core_version}"
-
     testImplementation "ch.qos.logback:logback-classic:${logback_classic_version}"
 }
 
 test {
     useJUnitPlatform()
     testLogging.showStandardStreams = true
+    systemProperty "file.encoding", "UTF-8"   // <--- importante para acentos y caracteres especiales
+    jvmArgs "-Dfile.encoding=UTF-8"
 }
 
 gradle.startParameter.continueOnFailure = true
+
+tasks.named('aggregate') {
+    mustRunAfter 'test'
+}
+
+tasks.named('clean') {
+    delete 'build', 'target'
+    doFirst {
+        println "Limpiando directorios build y target..."
+    }
+}
