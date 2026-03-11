@@ -3,9 +3,12 @@ package com.restaurante.tasks;
 import com.restaurante.ui.KitchenPage;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Task;
+import net.serenitybdd.screenplay.abilities.BrowseTheWeb;
 import net.serenitybdd.screenplay.actions.Click;
 import net.serenitybdd.screenplay.matchers.WebElementStateMatchers;
+import net.serenitybdd.screenplay.targets.Target;
 import net.serenitybdd.screenplay.waits.WaitUntil;
+import org.openqa.selenium.JavascriptExecutor;
 
 public class PrepararPedido implements Task {
 
@@ -16,7 +19,7 @@ public class PrepararPedido implements Task {
     }
 
     /**
-     * @param orderId UUID completo del pedido (e.g. "d264b7be-5bb7-43d7-b4b3-c53b534e9a38")
+     * @param orderId UUID completo (e.g. "a63dfa87-729c-44b5-a7f3-6331aaccb9cb")
      *                Se usan los primeros 8 caracteres que aparecen en la card del board.
      */
     public static PrepararPedido laOrden(String orderId) {
@@ -32,18 +35,27 @@ public class PrepararPedido implements Task {
                     .forNoMoreThan(20).seconds()
         );
 
-        // Click "Iniciar" en la card correcta
+        // Click "Iniciar": scroll al centro para evitar que el header fijo intercepte el click
         actor.attemptsTo(
             WaitUntil.the(KitchenPage.startButtonByShortId(shortId), WebElementStateMatchers.isClickable())
-                    .forNoMoreThan(10).seconds(),
-            Click.on(KitchenPage.startButtonByShortId(shortId))
+                    .forNoMoreThan(10).seconds()
         );
+        scrollToCenter(actor, KitchenPage.startButtonByShortId(shortId));
+        actor.attemptsTo(Click.on(KitchenPage.startButtonByShortId(shortId)));
 
-        // Click "Marcar listo" en la card correcta
+        // Click "Marcar listo": ídem scroll antes del click
         actor.attemptsTo(
             WaitUntil.the(KitchenPage.markReadyButtonByShortId(shortId), WebElementStateMatchers.isClickable())
-                    .forNoMoreThan(10).seconds(),
-            Click.on(KitchenPage.markReadyButtonByShortId(shortId))
+                    .forNoMoreThan(10).seconds()
         );
+        scrollToCenter(actor, KitchenPage.markReadyButtonByShortId(shortId));
+        actor.attemptsTo(Click.on(KitchenPage.markReadyButtonByShortId(shortId)));
+    }
+
+    /** Centra el elemento verticalmente en el viewport vía JS para esquivar el header fijo. */
+    private <T extends Actor> void scrollToCenter(T actor, Target target) {
+        JavascriptExecutor js = (JavascriptExecutor) BrowseTheWeb.as(actor).getDriver();
+        js.executeScript("arguments[0].scrollIntoView({block:'center'});", target.resolveFor(actor));
     }
 }
+

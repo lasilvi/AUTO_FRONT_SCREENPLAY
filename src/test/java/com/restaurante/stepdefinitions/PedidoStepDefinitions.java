@@ -47,17 +47,13 @@ public class PedidoStepDefinitions {
         // Más fiable que leer el DOM (evita problemas de animación en la ConfirmationPage)
         String currentUrl = Serenity.getDriver().getCurrentUrl();
         orderId = currentUrl.substring(currentUrl.lastIndexOf('/') + 1);
-        System.out.println(">>> URL DE CONFIRMACION: " + currentUrl);
-        System.out.println(">>> ORDER ID CAPTURADO: " + orderId);
     }
 
     @And("el personal de cocina gestiona la orden en el monitor hasta marcarla como terminada")
     public void elPersonalDeCocinaGestionaLaOrden() {
-        System.out.println(">>> URL ANTES DE COCINA: " + Serenity.getDriver().getCurrentUrl());
         OnStage.theActorInTheSpotlight().attemptsTo(
                 IngresarALaCocina.conPin("cocina123")
         );
-        System.out.println(">>> URL DESPUES DE LOGIN COCINA: " + Serenity.getDriver().getCurrentUrl());
         OnStage.theActorInTheSpotlight().attemptsTo(
                 PrepararPedido.laOrden(orderId)
         );
